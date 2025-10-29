@@ -23,6 +23,7 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 *.log
+*.log.*
 
 # OS
 .DS_Store
@@ -35,10 +36,22 @@ Thumbs.db
 *.swo
 *~
 
+# Archives and binaries
+*.tar
+*.tar.*
+*.jar
+*.exe
+*.msi
+*.deb
+*.zip
+*.tgz
+*.sig
+
 # Misc
 .cache
 temp/
 tmp/
+pkg/
 
 # Keep production env templates
 !.env.production
