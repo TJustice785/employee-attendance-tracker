@@ -1,0 +1,7 @@
+backend/
+database_setup*.sql
+*.md
+!README.md
+.git/
+.gitignore
+railway.txt

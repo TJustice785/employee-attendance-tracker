@@ -1,11 +1,13 @@
 import axios from 'axios';
 
-// API URL - defaults to Railway production backend
+// API URL - ALWAYS use Railway production backend
+// Force correct URL even if REACT_APP_API_URL is not set
 const API_URL = process.env.REACT_APP_API_URL || 'https://observant-enthusiasm-production.up.railway.app/api';
 
-// Log API URL for debugging
+// Log API URL for debugging (Build timestamp: 2025-10-30 08:19)
 console.log('🔗 API URL:', API_URL);
 console.log('🌍 Environment:', process.env.NODE_ENV);
+console.log('✅ Using Railway Backend');
 
 const api = axios.create({
   baseURL: API_URL,
