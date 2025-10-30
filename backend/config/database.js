@@ -6,28 +6,50 @@ if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
 }
 
-// Log connection config (without password)
-console.log('Database Config:', {
-  host: process.env.DB_HOST || 'localhost',
-  user: process.env.DB_USER || 'root',
-  database: process.env.DB_NAME || 'attendance_db',
-  port: process.env.DB_PORT || '3306'
-});
+// Parse DATABASE_URL if available (Railway automatic service linking)
+let dbConfig;
+if (process.env.DATABASE_URL || process.env.MYSQL_URL) {
+  const dbUrl = process.env.DATABASE_URL || process.env.MYSQL_URL;
+  console.log('Using DATABASE_URL for connection');
+  dbConfig = {
+    uri: dbUrl,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0,
+    connectTimeout: 60000,
+    acquireTimeout: 60000,
+    timeout: 60000,
+    enableKeepAlive: true,
+    keepAliveInitialDelay: 0
+  };
+} else {
+  // Log connection config (without password)
+  console.log('Database Config:', {
+    host: process.env.DB_HOST || 'localhost',
+    user: process.env.DB_USER || 'root',
+    database: process.env.DB_NAME || 'attendance_db',
+    port: process.env.DB_PORT || '3306'
+  });
+  
+  dbConfig = {
+    host: process.env.DB_HOST || 'localhost',
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME || 'attendance_db',
+    port: process.env.DB_PORT || 3306,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0,
+    connectTimeout: 60000,
+    acquireTimeout: 60000,
+    timeout: 60000,
+    enableKeepAlive: true,
+    keepAliveInitialDelay: 0
+  };
+}
 
 // Create connection pool for better performance
-const pool = mysql.createPool({
-  host: process.env.DB_HOST || 'localhost',
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME || 'attendance_db',
-  port: process.env.DB_PORT || 3306,
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
-  connectTimeout: 60000, // 60 seconds
-  acquireTimeout: 60000,
-  timeout: 60000
-});
+const pool = mysql.createPool(dbConfig);
 
 // Get promise-based connection
 const promisePool = pool.promise();
