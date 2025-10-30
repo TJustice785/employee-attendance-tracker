@@ -2,7 +2,11 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const path = require('path');
-require('dotenv').config({ path: path.join(__dirname, '.env'), override: true });
+
+// Only load .env in development (Railway injects env vars in production)
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config({ path: path.join(__dirname, '.env') });
+}
 
 const { testConnection, initializeDatabase } = require('./config/database');
 const attendanceRoutes = require('./routes/attendanceRoutes');
