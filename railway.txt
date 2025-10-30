@@ -1,0 +1,9 @@
+railway
+mysql://root:lMumIpCnpTrpJndSCpziRowwnwPnekkk@switchback.proxy.rlwy.net:52833/railway
+lMumIpCnpTrpJndSCpziRowwnwPnekkk
+mysql://root:lMumIpCnpTrpJndSCpziRowwnwPnekkk@mysql.railway.internal:3306/railway
+railway
+mysql.railway.internal
+lMumIpCnpTrpJndSCpziRowwnwPnekkk
+3306
+root
