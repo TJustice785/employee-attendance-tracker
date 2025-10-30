@@ -1,6 +1,11 @@
 import axios from 'axios';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+// API URL - defaults to Railway production backend
+const API_URL = process.env.REACT_APP_API_URL || 'https://observant-enthusiasm-production.up.railway.app/api';
+
+// Log API URL for debugging
+console.log('🔗 API URL:', API_URL);
+console.log('🌍 Environment:', process.env.NODE_ENV);
 
 const api = axios.create({
   baseURL: API_URL,
