@@ -10,18 +10,37 @@ if (process.env.NODE_ENV !== 'production') {
 let dbConfig;
 if (process.env.DATABASE_URL || process.env.MYSQL_URL) {
   const dbUrl = process.env.DATABASE_URL || process.env.MYSQL_URL;
-  console.log('Using DATABASE_URL for connection');
-  dbConfig = {
-    uri: dbUrl,
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0,
-    connectTimeout: 60000,
-    acquireTimeout: 60000,
-    timeout: 60000,
-    enableKeepAlive: true,
-    keepAliveInitialDelay: 0
-  };
+  console.log('Using MYSQL_URL for connection');
+  
+  // Parse the MySQL URL: mysql://user:password@host:port/database
+  try {
+    const url = new URL(dbUrl);
+    dbConfig = {
+      host: url.hostname,
+      user: url.username,
+      password: url.password,
+      database: url.pathname.substring(1), // Remove leading '/'
+      port: url.port || 3306,
+      waitForConnections: true,
+      connectionLimit: 10,
+      queueLimit: 0,
+      connectTimeout: 60000,
+      acquireTimeout: 60000,
+      timeout: 60000,
+      enableKeepAlive: true,
+      keepAliveInitialDelay: 0
+    };
+    
+    console.log('Parsed Database Config:', {
+      host: dbConfig.host,
+      user: dbConfig.user,
+      database: dbConfig.database,
+      port: dbConfig.port
+    });
+  } catch (error) {
+    console.error('Failed to parse DATABASE_URL:', error.message);
+    throw error;
+  }
 } else {
   // Log connection config (without password)
   console.log('Database Config:', {
