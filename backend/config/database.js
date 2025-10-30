@@ -23,23 +23,34 @@ const pool = mysql.createPool({
   port: process.env.DB_PORT || 3306,
   waitForConnections: true,
   connectionLimit: 10,
-  queueLimit: 0
+  queueLimit: 0,
+  connectTimeout: 60000, // 60 seconds
+  acquireTimeout: 60000,
+  timeout: 60000
 });
 
 // Get promise-based connection
 const promisePool = pool.promise();
 
-// Test database connection
-const testConnection = async () => {
-  try {
-    const connection = await promisePool.getConnection();
-    console.log('✅ Database connected successfully');
-    connection.release();
-    return true;
-  } catch (error) {
-    console.error('❌ Database connection failed:', error.message);
-    return false;
+// Test database connection with retry logic
+const testConnection = async (retries = 5, delay = 5000) => {
+  for (let i = 0; i < retries; i++) {
+    try {
+      console.log(`Attempting database connection (attempt ${i + 1}/${retries})...`);
+      const connection = await promisePool.getConnection();
+      console.log('✅ Database connected successfully');
+      connection.release();
+      return true;
+    } catch (error) {
+      console.error(`❌ Database connection failed (attempt ${i + 1}/${retries}):`, error.message);
+      if (i < retries - 1) {
+        console.log(`Retrying in ${delay/1000} seconds...`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
   }
+  console.error('❌ Failed to connect to database after all retries');
+  return false;
 };
 
 // Initialize database tables
